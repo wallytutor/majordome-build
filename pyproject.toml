@@ -1,0 +1,14 @@
+[project]
+name = "majordome-build"
+version = "0.1.0"
+description = "Build system for Majordome's stack."
+readme = "README.md"
+authors = [
+    { name = "Walter Dal'Maz Silva", email = "walter.dalmazsilva@gmail.com" },
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.11.2,<0.12.0"]
+build-backend = "uv_build"
