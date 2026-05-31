@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from IPython.core.magics import code
 import argparse
 import sys
 
