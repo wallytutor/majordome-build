@@ -111,9 +111,58 @@ def _run(command: str) -> None:
     return proc.returncode
 
 
+def _get_packages() -> list[str]:
+    """ Get the list of packages to import from pyproject.toml. """
+    import tomllib
+
+    packages = []
+    pyproject_path = PROJECT_ROOT / "pyproject.toml"
+
+    if not pyproject_path.exists():
+        sys.exit("Error: pyproject.toml not found")
+
+    try:
+        with open(pyproject_path, "rb") as f:
+            data = tomllib.load(f)
+
+            packages = data\
+                .get("tool", {})\
+                .get("maturin", {})\
+                .get("python-packages", [])
+
+            if not packages:
+                name = data.get("project", {}).get("name")
+                if name:
+                    packages = [name.replace("-", "_")]
+    except Exception as e:
+        sys.exit(f"Error: Failed to parse pyproject.toml: {e}")
+
+    return packages
+
+
 def _interactive() -> None:
     """ Run an interactive session in the project root directory. """
+    def print_contents(extension: ModuleType) -> None:
+        print("    Available contents:")
+
+        for x in sorted(dir(extension)):
+            if x.startswith("_"):
+                continue
+            print(f"    - {x}")
+
     from IPython import embed
     from importlib import import_module
+    import tomllib
 
-    embed()
+    user_ns = {}
+
+    for pkg in _get_packages():
+        try:
+            mod = import_module(pkg)
+            user_ns[pkg] = mod
+            print(f"\nImported package: {pkg}")
+            print_contents(mod)
+        except ImportError as e:
+            print(f"Warning: Could not import package {pkg}: {e}")
+
+    embed(colors="Linux",user_ns=user_ns)
