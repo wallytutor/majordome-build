@@ -1,2 +1,6 @@
-def hello() -> str:
-    return "Hello from majordome-build!"
+# -*- coding: utf-8 -*-
+import sys
+
+
+def main() -> None:
+    sys.exit(0)
