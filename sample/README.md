@@ -1,6 +1,6 @@
-# majordome-constants
+# majordome-sample
 
-Crate providing constants to the Majordome stack.
+Sample crate to be used as a base in the Majordome stack.
 
 ## Development builds
 
