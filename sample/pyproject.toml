@@ -23,7 +23,9 @@ cache-keys = [
 ]
 
 [tool.uv.sources]
-majordome-build = { git = "https://github.com/wallytutor/majordome-build.git" }
+# In production code, use:
+# majordome-build = { git = "https://github.com/wallytutor/majordome-build.git" }
+majordome-build = { path = "..", editable = true }
 
 [build-system]
 requires = ["maturin>=1.0,<2.0"]

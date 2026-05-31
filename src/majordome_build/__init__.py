@@ -140,19 +140,20 @@ def _get_packages() -> list[str]:
     return packages
 
 
+def _print_contents(extension: ModuleType) -> None:
+    """ Print the contents of the extension. """
+    for x in sorted(dir(extension)):
+        if x.startswith("_"):
+            continue
+        print(f"\033[34m    - {x}\033[0m")
+
+    print("")
+
+
 def _interactive() -> None:
     """ Run an interactive session in the project root directory. """
-    def print_contents(extension: ModuleType) -> None:
-        print("    Available contents:")
-
-        for x in sorted(dir(extension)):
-            if x.startswith("_"):
-                continue
-            print(f"    - {x}")
-
     from IPython import embed
     from importlib import import_module
-    import tomllib
 
     user_ns = {}
 
@@ -160,9 +161,9 @@ def _interactive() -> None:
         try:
             mod = import_module(pkg)
             user_ns[pkg] = mod
-            print(f"\nImported package: {pkg}")
-            print_contents(mod)
+            print(f"\033[36m\nImported package: {pkg}\033[0m")
+            _print_contents(mod)
         except ImportError as e:
-            print(f"Warning: Could not import package {pkg}: {e}")
+            sys.exit(f"Error: Could not import package {pkg}: {e}")
 
-    embed(colors="Linux",user_ns=user_ns)
+    embed(colors="Linux", user_ns=user_ns)

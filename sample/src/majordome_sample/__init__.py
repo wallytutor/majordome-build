@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from typing import Any
-from .sample import sample
+from .sample import *
 
 
 __all__ = sorted([x for x in dir(sample) if not x.startswith("_")])
