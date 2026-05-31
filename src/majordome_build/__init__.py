@@ -11,18 +11,11 @@ PROJECT_ROOT = Path.cwd()
 
 
 def main() -> None:
-    print("=" * 70)
-    print("Majordome Build Script")
-    print("=" * 70)
-    print("")
+    _print_header("Majordome Build Script")
 
     _validate_directory()
 
     args = _get_arguments()
-
-    should_release = args.release
-    should_docs    = args.docs
-    open_docs      = args.open_docs
 
     ### clippy
 
@@ -31,7 +24,7 @@ def main() -> None:
 
     ### build
 
-    if _run(f"cargo build {"--release" if should_release else ""}") != 0:
+    if _run(f"cargo build {"--release" if args.release else ""}") != 0:
         sys.exit("Error: Crate build failed")
 
     ### install
@@ -41,13 +34,20 @@ def main() -> None:
 
     ### docs
 
-    if should_docs:
-        if _run("cargo doc --no-deps" + (" --open" if open_docs else "")) != 0:
-            sys.exit(f"Error: Crate docs failed")
+    if args.docs:
+        _build_docs(args.open_docs)
 
-    print("=" * 70)
-    print("Build script completed successfully!")
-    print("=" * 70)
+    _print_header("Build script completed successfully!")
+
+    if args.run_interactive:
+        _interactive()
+
+
+def _print_header(txt: str) -> None:
+    """ Print a header. """
+    print(f"\033[32m{'=' * 70}\033[0m")
+    print(f"\033[32m{txt}\033[0m")
+    print(f"\033[32m{'=' * 70}\033[0m")
 
 
 def _validate_directory() -> None:
@@ -89,10 +89,30 @@ def _get_arguments() -> argparse.Namespace:
         help   = "open the extension documentation after building."
     )
 
+    parser.add_argument(
+        "--run-interactive",
+        action = "store_true",
+        help   = "run an interactive session after building the project."
+    )
+
     return parser.parse_args()
+
+
+def _build_docs(show: bool) -> None:
+    """ Build the extension documentation. """
+    if _run("cargo doc --no-deps" + (" --open" if show else "")) != 0:
+        sys.exit(f"Error: Crate docs failed")
 
 
 def _run(command: str) -> None:
     """ Run a command in the project root directory. """
     proc = run(command.split(), cwd=PROJECT_ROOT, check=True)
     return proc.returncode
+
+
+def _interactive() -> None:
+    """ Run an interactive session in the project root directory. """
+    from IPython import embed
+    from importlib import import_module
+
+    embed()
