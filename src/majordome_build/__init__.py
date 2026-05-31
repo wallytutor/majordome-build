@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from IPython.core.magics import code
 import argparse
 import sys
 
@@ -26,28 +27,24 @@ def main() -> None:
 
     ### clippy
 
-    proc = _run("cargo clippy --no-deps")
-    if proc.returncode != 0:
-        sys.exit(f"Error: Crate clippy failed ({proc.returncode})")
+    if _run("cargo clippy --no-deps") != 0:
+        sys.exit("Error: Crate clippy failed")
 
     ### build
 
-    proc = _run(f"cargo build {"--release" if should_release else ""}")
-    if proc.returncode != 0:
-        sys.exit(f"Error: Crate build failed ({proc.returncode})")
+    if _run(f"cargo build {"--release" if should_release else ""}") != 0:
+        sys.exit("Error: Crate build failed")
 
     ### install
 
-    proc = _run("uv pip install -e .")
-    if proc.returncode != 0:
-        sys.exit(f"Error: Crate install failed ({proc.returncode})")
+    if _run("uv pip install -e .") != 0:
+        sys.exit(f"Error: Crate install failed")
 
     ### docs
 
     if should_docs:
-        proc = _run("cargo doc --no-deps" + " --open" if open_docs else "")
-        if proc.returncode != 0:
-            sys.exit(f"Error: Crate docs failed ({proc.returncode})")
+        if _run("cargo doc --no-deps" + (" --open" if open_docs else "")) != 0:
+            sys.exit(f"Error: Crate docs failed")
 
     print("=" * 70)
     print("Build script completed successfully!")
@@ -56,13 +53,11 @@ def main() -> None:
 
 def _validate_directory() -> None:
     """ Validate that the script is running in the repository root. """
-    here = Path.cwd()
+    if not (PROJECT_ROOT / "pyproject.toml").exists():
+        sys.exit(f"Error: pyproject.toml not found in {PROJECT_ROOT}.")
 
-    if not (here / "pyproject.toml").exists():
-        sys.exit("Error: Not in the repository root.")
-
-    if not (here / "Cargo.toml").exists():
-        sys.exit("Error: Crate root not found.")
+    if not (PROJECT_ROOT / "Cargo.toml").exists():
+        sys.exit(f"Error: Cargo.toml not found in {PROJECT_ROOT}.")
 
 
 def _get_arguments() -> argparse.Namespace:
@@ -100,5 +95,4 @@ def _get_arguments() -> argparse.Namespace:
 
 def _run(command: str) -> int:
     """ Run a command in the project root directory. """
-    proc = run(command.split(), cwd=PROJECT_ROOT, check=False)
-    return proc.returncode
+    return run(command.split(), cwd=PROJECT_ROOT, check=False).returncode
