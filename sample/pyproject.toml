@@ -1,0 +1,30 @@
+[project]
+name = "majordome-sample"
+version = "0.1.0"
+description = "Sample crate to demonstrate the use of majordome-build."
+readme = "README.md"
+authors = [
+    { name = "Walter Dal'Maz Silva", email = "walter.dalmazsilva@gmail.com" },
+]
+requires-python = ">=3.12"
+dependencies = ["majordome-build"]
+
+[tool.maturin]
+module-name = "majordome_sample.sample"
+python-packages = ["majordome_sample"]
+python-source = "src"
+
+[tool.uv]
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "src/**/*.rs" },
+    { file = "Cargo.toml" },
+    { file = "Cargo.lock" },
+]
+
+[tool.uv.sources]
+majordome-build = { git = "https://github.com/wallytutor/majordome-build.git" }
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"

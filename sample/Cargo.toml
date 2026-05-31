@@ -1,0 +1,19 @@
+[package]
+name = "majordome-sample"
+version = "0.1.0"
+edition = "2024"
+authors = ["Walter Dal'Maz Silva <walter.dalmazsilva@gmail.com>"]
+description = "Sample crate to demonstrate the use of majordome-build."
+readme = "README.md"
+license = "MIT"
+keywords = ["database", "properties", "chemical", " thermodynamics"]
+categories = ["science"]
+
+[lib]
+name = "majordome_sample"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies.pyo3]
+version = "0.28.2"
+features = ["extension-module", "abi3-py312", "multiple-pymethods"]

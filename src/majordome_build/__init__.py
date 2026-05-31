@@ -91,8 +91,9 @@ def _get_arguments() -> argparse.Namespace:
 
     parser.add_argument(
         "--run-interactive",
-        action = "store_true",
-        help   = "run an interactive session after building the project."
+        action  = argparse.BooleanOptionalAction,
+        default = True,
+        help    = "run an interactive session after building the project."
     )
 
     return parser.parse_args()
