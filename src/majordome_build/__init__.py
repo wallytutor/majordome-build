@@ -93,6 +93,7 @@ def _get_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _run(command: str) -> int:
+def _run(command: str) -> None:
     """ Run a command in the project root directory. """
-    return run(command.split(), cwd=PROJECT_ROOT, check=False).returncode
+    proc = run(command.split(), cwd=PROJECT_ROOT, check=True)
+    return proc.returncode
