@@ -24,8 +24,15 @@ def main() -> None:
 
     ### build
 
-    if _run(f"cargo build {"--release" if args.release else ""}") != 0:
-        sys.exit("Error: Crate build failed")
+    if args.build:
+        if _run(f"cargo build {"--release" if args.release else ""}") != 0:
+            sys.exit("Error: Crate build failed")
+
+    ### test
+
+    if args.test:
+        if _run(f"cargo test {"--release" if args.release else ""}") != 0:
+            sys.exit("Error: Crate test failed")
 
     ### install
 
@@ -74,6 +81,13 @@ def _get_arguments() -> argparse.Namespace:
         action  = argparse.BooleanOptionalAction,
         default = True,
         help    = "build the extension."
+    )
+
+    parser.add_argument(
+        "--test",
+        action  = argparse.BooleanOptionalAction,
+        default = True,
+        help    = "run the extension tests."
     )
 
     parser.add_argument(
