@@ -20,3 +20,4 @@ build-backend = "uv_build"
 
 [project.scripts]
 majordome-build = "majordome_build:main"
+majordome-build-qmd = "majordome_build.compile_qmd:main"
