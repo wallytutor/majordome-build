@@ -2,8 +2,12 @@
 
 Provides a standard strict build workflow for working on the Majordome stack.
 
-## Usage
+## 📃 Documentation build
 
-- New projects in the Majordome stack should use `sample` package as a template.
+```bash
+# Only the first time in a new environment:
+uv sync
 
-- Follow the instructions in the `sample` package documentation for details.
+# This will automatically sync the project later:
+uv run majordome-build-qmd --extras docs
+```

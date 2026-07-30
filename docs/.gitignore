@@ -1,0 +1,7 @@
+/.jupyter_cache/
+/.quarto/
+**/*.quarto_ipynb
+
+/_book/
+/*_files/
+*.html

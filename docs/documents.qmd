@@ -1,0 +1,203 @@
+# Documents
+
+*aka majordome_build.documents*
+
+```{python}
+from majordome_build.documents import *
+
+warnings.filterwarnings("ignore")
+```
+
+```{python}
+doc = DocumentedClass(SignatureEntry)
+```
+
+```{python}
+doc.constructor()
+```
+
+```{python}
+doc.members()
+```
+
+## Tutorial
+
+```{python}
+#| echo: true
+class Dummy:
+    """ A dummy class for testing purposes. """
+    def method(self, a, b):
+        """ This is a method.
+
+        Parameters
+        ----------
+        a : int
+            This is the first parameter.
+        b : int
+            This is the second parameter.
+        """
+        pass
+
+    @staticmethod
+    def static_method(a, b):
+        """ This is a static method.
+
+        Parameters
+        ----------
+        a : int
+            This is the first parameter.
+        b : int
+            This is the second parameter.
+        """
+        pass
+
+    @classmethod
+    def class_method(cls, a, b):
+        """ This is a class method.
+
+        Parameters
+        ----------
+        a : int
+            This is the first parameter.
+        b : int
+            This is the second parameter.
+        """
+        pass
+
+    @property
+    def prop(self) -> int:
+        """ This is a property. """
+        return 42
+```
+
+Documentation of all members at once is discouraged, but it is possible to do so by calling all methods of ``DocumentedClass`:
+
+```python
+doc = DocumentedClass(Dummy)
+doc.constructor()
+doc.members()
+doc.properties()
+doc.classmethods()
+doc.staticmethods()
+```
+
+For generating more organized documentation, it is possible to selectively include or exclude static methods, class methods and properties. This allows to generate separate sections for each type of member, which can be more readable and easier to navigate.
+
+The constructor:
+
+```{python}
+doc = DocumentedClass(Dummy)
+doc.constructor()
+```
+
+Only normal methods:
+
+```{python}
+doc.members()
+```
+
+Only static methods:
+
+```{python}
+doc.staticmethods()
+```
+
+Only class methods:
+
+```{python}
+doc.classmethods()
+```
+
+Only properties:
+
+```{python}
+doc.properties()
+```
+
+## Examples
+
+A minimal function with no parameters and no docstring:
+
+```{python}
+#| echo: true
+def awesome_useless():
+    pass
+```
+
+```{python}
+test_for_func(awesome_useless, greedy=False)
+```
+
+A function with variadic parameters and no documented parameters:
+
+```{python}
+#| echo: true
+def awesome_useless(*args, **kwargs):
+    """ Some useless function. """
+    pass
+```
+
+```{python}
+test_for_func(awesome_useless, greedy=False)
+```
+
+A function with variadic parameters with type annotation and explictly documented keyword parameter:
+
+```{python}
+#| echo: true
+def awesome_useless(*args: tuple[int, ...], **kwargs):
+    """ Some useless function.
+
+    Parameters
+    ----------
+    args : tuple
+        Positional arguments. This is intended to be a catch-all for
+        any number of positional arguments. Let's write a long text.
+    some_kwarg : int = 1
+        Keyword argument. This is intended to be a catch-all for any
+        number of keyword arguments. Let's write a long text.
+    """
+    pass
+```
+
+```{python}
+test_for_func(awesome_useless, greedy=False)
+```
+
+A function with a positional-only parameter, a keyword-only parameter and variadic parameters:
+
+```{python}
+#| echo: true
+def awesome_useless(a: int, /, b, **kwargs):
+    """ Some useless function. """
+    pass
+```
+
+```{python}
+test_for_func(awesome_useless, greedy=False)
+```
+
+Function with all kinds of parameters:
+
+```{python}
+#| echo: true
+def awesome_useless(x, /, y: int = 0, *, z: int = 0, **kwargs) -> None:
+    """ Some useless function.
+
+    Parameters
+    ----------
+    x : int
+        Nothing to say about this.
+    y : int
+        Nothing to say about this.
+    z : int
+        Nothing to say about this.
+    xx : int
+        Nothing to say about this.
+    """
+    pass
+```
+
+```{python}
+test_for_func(awesome_useless, greedy=False)
+```

@@ -1,0 +1,44 @@
+# Majordome Build
+
+Package `majordome_build` provides a standard strict build workflow for working on the Majordome stack. It consists of a set of scripts for automating workflows and a custom Quarto-based project documentation toolkit.
+
+## Tool `majordome-build`
+
+All Rust-based packages in the Majordome framework are meant to be built with `majordome-build` tool. It is a simple workflow utility that enforces running `clippy` for code quality verification and automatically runs other required steps that otherwise would need to be run manually using `cargo`. It must be run from the project root; for more details, consider running with the `--help` flag:
+
+```bash
+uv run majordome-build --help
+```
+
+Its main options are:
+
+- `--release`: build the extension in release mode.
+
+- `--build, --no-build`: build the extension.
+
+- `--test, --no-test`: run the extension tests.
+
+- `--docs, --no-docs`: build the extension documentation.
+
+- `--open-docs`: open the extension documentation after building.
+
+- `--run-interactive, --no-run-interactive`: run an interactive session after building the project.
+
+::: {.callout-note title="New projects"}
+
+New projects in the Majordome stack should use `sample` package as a template. Follow the instructions in the `sample` package documentation for details.
+
+:::
+
+## Tool `majordome-build-qmd`
+
+Manages the build of Quarto documentation and reports, ensuring that project dependencies are in sync and the right virtual environment is employed. It is expected to be run from the project root if no `--file` argument is provided, and in that case it will look for the `docs/` directory at the same level as a `pyproject.yaml` and try to build it as a monolitic documentation. Otherwise, a specific file is built alone as a report.
+
+```bash
+uv run majordome-build-qmd --help
+```
+
+Its main options are:
+
+- `--extras EXTRAS`: Comma-separated list of extras to install via uv sync.
+- `--file FILE`: The file (or directory) to render using Quarto.

@@ -1,0 +1,31 @@
+project:
+  type: book
+
+jupyter: python3
+
+execute:
+  cache:   true
+  echo:    false
+  warning: false
+
+book:
+  title: "Majordome Build"
+  author: "Walter Dal'Maz Silva"
+  date: "today"
+  sidebar:
+    style: "docked"
+    search: true
+    collapse-level: 2
+
+  chapters:
+    - index.qmd
+    - documents.qmd
+
+format:
+  html:
+    reference-location: document
+    highlight-style: github
+    theme:
+      - pulse
+
+  typst: default
