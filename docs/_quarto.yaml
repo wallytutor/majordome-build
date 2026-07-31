@@ -9,11 +9,11 @@ execute:
   warning: false
 
 book:
-  title: "Majordome Build"
-  author: "Walter Dal'Maz Silva"
-  date: "today"
+  title: Majordome Build
+  author: Walter Dal'Maz Silva
+  date: today
   sidebar:
-    style: "docked"
+    style: docked
     search: true
     collapse-level: 2
 
