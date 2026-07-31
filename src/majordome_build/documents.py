@@ -15,6 +15,10 @@ import re
 import textwrap
 import warnings
 
+COLOR_PRIMARY   = "#012169"
+COLOR_SECONDARY = "#0838a1"
+
+
 # region: public
 class MarkdownFormatting:
     """ Helper for formatting markdown text. """
@@ -518,6 +522,10 @@ class SignatureEntry:
             return f"{p.default}"
 
     def _fmt_description(self) -> str:
+        """ Returns the formatted description of the function. """
+        if not self.doc:
+            return ""
+
         text = ""
 
         if short := self.doc.short_description:
@@ -531,32 +539,16 @@ class SignatureEntry:
 
         return text
 
-    def _fmt_parameter(self, entry: dict) -> str:
-        spaces = "&nbsp;" * 4
-
-        head = entry["annotated"]
-        body = entry["description"]
-
-        # text = self.code_fences(head)
-        # text += f"<p>{spaces}{body}</p>\n\n"
-
-        text = "\n".join([
-            r'<div class="row" style="font-size: 0.8em;">',
-            self.code_fences(head),
-            r'</div>',
-            r'<div class="row" style="margin-top: -2em; font-size: 0.8em;">',
-            f'  <div class="col-2">{spaces}</div>',
-            f'  <div class="col-10">{body}</div>',
-            r'</div>',
-        ])
-
-        return text
-
     def _fmt_parameters_section(self) -> str:
-        text = "\n***\n\n**Parameters**\n"
+        """ Returns the formatted parameters section of the function. """
+        if not self._docs:
+            return ""
+
+        text = "\n|*Parameters*|\n|:-----|\n"
 
         for entry in self._docs:
-            text += self._fmt_parameter(entry)
+            head, body = entry["annotated"], entry["description"]
+            text += f"{self.code_fences(head)}\n{"&nbsp;" * 4}{body}"
 
         return text
 
@@ -569,30 +561,32 @@ class SignatureEntry:
             The title to use for the section header and callout. By
             default, the function name is used.
         """
+        bkg   = kwargs.get("background_color", COLOR_SECONDARY)
+        txt   = kwargs.get("text_color", "white")
+        fnt   = kwargs.get("font_weight", "normal")
         title = kwargs.get("title", self.fn.__name__)
 
-        # <div class="callout callout-note">
-        #   <div class="callout-header">
-        #     <div class="callout-title">My Title</div>
-        #   </div>
-        #   <div class="callout-body">
-        #     <p>Content here.</p>
-        #   </div>
-        # </div>
+        text = "\n".join([
+            f"<div style=\"overflow: hidden; margin: 0 0;\">",
+            f"  <div style=\""
+            f"    background-color: {bkg}; "
+            f"    color: {txt}; "
+            f"    padding: 0.8em 0.8em; "
+            f"    font-weight: {fnt}; "
+            f"    display: flex; "
+            f"    align-items: center; "
+            f"  \">",
+            f"  {title}",
+            f"  </div>",
+            f"  <div style=\"padding: 0.8em; font-size: 0.8em\">",
+            f"    {self.code_fences(self._sig_text)}",
+            f"    {self._fmt_description()}",
+            f"    {self._fmt_parameters_section()}",
+            f"  </div>",
+            f"</div>",
+            f"\n\n***\n\n",
+        ])
 
-        text = ""
-        text += f"""::: {{.callout-note title="{title}"}}"""
-        text += self.code_fences(self._sig_text)
-
-        if self.doc:
-            text += self._fmt_description()
-
-        if self._docs:
-            text += self._fmt_parameters_section()
-
-        text += f":::\n\n"
-
-        # print(text)
         display(Markdown(text))
 
 
@@ -664,6 +658,11 @@ class DocumentedClass:
             DocumentedClass._doc_it(func.__func__, **kwargs)
 
     def constructor(self, **kwargs) -> None:
+        # Override defaults for constructor to have some sort of header.
+        kwargs.setdefault("background_color", COLOR_PRIMARY)
+        kwargs.setdefault("text_color", "white")
+        kwargs.setdefault("font_weight", "bold")
+
         entry = SignatureEntry(self.cls)
         entry.documentation(**kwargs)
 
@@ -684,8 +683,6 @@ class DocumentedClass:
 # endregion: public
 
 # region: internals
-
-
 def with_attrs(**attrs):
     def wrap(fn):
         for k, v in attrs.items():
