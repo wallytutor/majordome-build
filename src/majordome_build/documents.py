@@ -544,13 +544,28 @@ class SignatureEntry:
         if not self._docs:
             return ""
 
-        text = "\n|*Parameters*|\n|:-----|\n"
+        text = "\n**Parameters**\n"
 
         for entry in self._docs:
             head, body = entry["annotated"], entry["description"]
-            text += f"{self.code_fences(head)}\n{"&nbsp;" * 4}{body}"
+            text += f"\n{self.code_fences(head)}\n{"&nbsp;" * 4}{body}\n"
 
         return text
+
+    def _switch_html_typst(self, html_block: str, typst_block: str) -> str:
+        """ Returns the html and typst blocks. """
+        return "\n".join([
+            f"::: {{.content-visible when-format=\"html\"}}",
+            f"{html_block}",
+            f":::",
+            f"",
+            f"::: {{.content-visible when-format=\"typst\"}}",
+            f"```{{=typst}}",
+            f"{typst_block}",
+            f"```",
+            f":::",
+            f""
+        ])
 
     def documentation(self, **kwargs) -> None:
         """ Generates the markdown documentation for the function.
@@ -562,29 +577,69 @@ class SignatureEntry:
             default, the function name is used.
         """
         bkg   = kwargs.get("background_color", COLOR_SECONDARY)
-        txt   = kwargs.get("text_color", "white")
         fnt   = kwargs.get("font_weight", "normal")
         title = kwargs.get("title", self.fn.__name__)
 
+        typst_weight = "bold" if fnt == "bold" else "regular"
+
+        begin_spacer = self._switch_html_typst(
+            html_block  = "",
+            typst_block = "#v(6pt)",
+        )
+        final_spacer = self._switch_html_typst(
+            html_block  = "\n\n***\n\n",
+            typst_block = "#v(6pt)",
+        )
+        param_spacer = self._switch_html_typst(
+            html_block  = "<div style=\"margin-top: 1em;\"></div>",
+            typst_block = "#v(6pt)",
+        )
+
         text = "\n".join([
-            f"<div style=\"overflow: hidden; margin: 0 0;\">",
-            f"  <div style=\""
-            f"    background-color: {bkg}; "
-            f"    color: {txt}; "
-            f"    padding: 0.8em 0.8em; "
-            f"    font-weight: {fnt}; "
-            f"    display: flex; "
-            f"    align-items: center; "
-            f"  \">",
-            f"  {title}",
-            f"  </div>",
-            f"  <div style=\"padding: 0.8em; font-size: 0.8em\">",
-            f"    {self.code_fences(self._sig_text)}",
-            f"    {self._fmt_description()}",
-            f"    {self._fmt_parameters_section()}",
-            f"  </div>",
+            f"{begin_spacer}",
+            f"::: {{.content-visible when-format=\"html\"}}",
+            f"<div style=\""
+            f"  border: 1.5px solid {bkg}; "
+            f"  background-color: white; "
+            f"  color: {bkg}; "
+            f"  padding: 0.6em 0.8em; "
+            f"  font-weight: {fnt}; "
+            f"  display: flex; "
+            f"  align-items: center; "
+            f"  width: 100%; "
+            f"  box-sizing: border-box; "
+            f"  border-radius: 4px; "
+            f"  \">"
+            f"  {title}"
             f"</div>",
-            f"\n\n***\n\n",
+            f":::",
+            f"",
+            f"::: {{.content-visible when-format=\"typst\"}}",
+            f"```{{=typst}}",
+            f"#block(",
+            f"  stroke: 1.5pt + rgb(\"{bkg}\"),",
+            f"  fill: white,",
+            f"  width: 100%,",
+            f"  inset: (top: 8pt, bottom: 8pt, left: 10pt, right: 10pt),",
+            f"  radius: 4pt,",
+            f"  [#text(fill: rgb(\"{bkg}\"), weight: \"{typst_weight}\")[{title}]]",
+            f")",
+            f"```",
+            f":::",
+            f"",
+            f"<div style=\""
+            f"    padding: 0.8em; "
+            f"    font-size: 0.8em; "
+            f"    width: 100%; "
+            f"    box-sizing: border-box;"
+            f"  \">",
+            f"  {self.code_fences(self._sig_text)}",
+            f"  {self._fmt_description()}",
+            f"",
+            f"{param_spacer}",
+            f"  {self._fmt_parameters_section()}",
+            f"</div>",
+            f"{final_spacer}",
         ])
 
         display(Markdown(text))

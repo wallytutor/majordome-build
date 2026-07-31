@@ -1,6 +1,6 @@
 [project]
 name = "majordome-build"
-version = "0.1.1"
+version = "0.1.2"
 description = "Build system for Majordome's stack."
 readme = "README.md"
 authors = [
@@ -23,8 +23,4 @@ majordome-build = "majordome_build:main"
 majordome-build-qmd = "majordome_build.compile_qmd:main"
 
 [project.optional-dependencies]
-docs = [
-    "jupyter>=1.1.1",
-    "jupyter-cache>=1.0.1",
-    "pyyaml>=6.0.3",
-]
+docs = ["jupyter>=1.1.1", "jupyter-cache>=1.0.1", "pyyaml>=6.0.3"]

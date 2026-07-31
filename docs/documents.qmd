@@ -10,13 +10,7 @@ warnings.filterwarnings("ignore")
 
 ```{python}
 doc = DocumentedClass(SignatureEntry)
-```
-
-```{python}
 doc.constructor()
-```
-
-```{python}
 doc.members()
 ```
 
@@ -70,7 +64,7 @@ class Dummy:
         return 42
 ```
 
-Documentation of all members at once is discouraged, but it is possible to do so by calling all methods of ``DocumentedClass`:
+Documentation of all members at once is discouraged, but it is possible to do so by calling all methods of `DocumentedClass`:
 
 ```python
 doc = DocumentedClass(Dummy)
