@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2026-08-03
+
+- Added common dependencies required to compile Quarto files with `majordome-build-qmd` so that they are available upon package installation.
+
 ## 0.1.2 - 2026-07-31
 
 - Improved the looks and robustness of documentation with a better design. Quarto callout was replaced by inline HTML for better control. Still needs some graphical improvement in a future update.
